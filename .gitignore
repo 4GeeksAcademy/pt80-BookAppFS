@@ -1,28 +1,4 @@
-# ignore all files starting with .
-.*
-
-# track this file .gitignore (i.e. do NOT ignore it)
-!.gitignore
-!.github
-php_errorlog
-.log
-
-# do not ignore gitpod and render files
-!.gitpod.Dockerfile
-!.welcome
-!.devcontainer
-!.devcontainer/*
-!Dockerfile.render
-!.gitpod.yml
-!render.yml
-!.render-buildpacks.json
-
-# track webpack configs (i.e. do NOT ignore it)
-!composer.json
-!webpack.config.js
-!package.json
-!webpack.production.js
-!webpack.development.js
+.env
 
 # track readme.md in the root (i.e. do NOT ignore it)
 !README.md

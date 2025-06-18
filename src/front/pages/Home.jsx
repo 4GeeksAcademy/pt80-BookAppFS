@@ -1,52 +1,53 @@
-import React, { useEffect } from "react"
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
+import Container, { Row, Col } from "../components/Grid";
+import BookCard from "../components/BookCard";
+import { ButtonGroup } from "../components/Button";
+
+import { useBookContext } from "../stores/bookstore";
 
 export const Home = () => {
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [cover, setCover] = useState("");
 
-	const { store, dispatch } = useGlobalReducer()
+  const handleSubmit = (ev) => {
+    ev.preventDefault();
+  };
 
-	const loadMessage = async () => {
-		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL
+  const [books, bookDispatch] = useBookContext();
 
-			if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
-
-			const response = await fetch(backendUrl + "/api/hello")
-			const data = await response.json()
-
-			if (response.ok) dispatch({ type: "set_hello", payload: data.message })
-
-			return data
-
-		} catch (error) {
-			if (error.message) throw new Error(
-				`Could not fetch the message from the backend.
-				Please check if the backend is running and the backend port is public.`
-			);
-		}
-
-	}
-
-	useEffect(() => {
-		loadMessage()
-	}, [])
-
-	return (
-		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
-			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
-			</p>
-			<div className="alert alert-info">
-				{store.message ? (
-					<span>{store.message}</span>
-				) : (
-					<span className="text-danger">
-						Loading message from the backend (make sure your python 🐍 backend is running)...
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}; 
+  return (
+    <Container>
+      <p>{import.meta.env.VITE_LIBRARYAPI_KEY}</p>
+      <Row>
+        <Col width={{ sm: 8 }} offset={{ sm: 2 }}>
+          <ButtonGroup>
+            <div
+              onClick={() => bookDispatch("sort_by_author")}
+              className="btn btn-primary"
+            >
+              Sort by author
+            </div>
+            <div
+              onClick={() => bookDispatch("sort_by_title")}
+              className="btn btn-primary"
+            >
+              Sort by title
+            </div>
+          </ButtonGroup>
+        </Col>
+      </Row>
+      <Row>
+        <Col width={{ sm: 8 }} offset={{ sm: 2 }}>
+          {books.map((book) => (
+            <div className="mb-3" key={book.id}>
+              <BookCard book={book} />
+            </div>
+          ))}
+        </Col>
+      </Row>
+    </Container>
+  );
+};

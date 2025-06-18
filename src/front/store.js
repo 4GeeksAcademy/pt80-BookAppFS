@@ -1,38 +1,36 @@
-export const initialStore=()=>{
-  return{
-    message: null,
-    todos: [
-      {
-        id: 1,
-        title: "Make the bed",
-        background: null,
-      },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
-      }
-    ]
-  }
-}
+export const initialStore = () => {
+  return {
+    books: [],
+  };
+};
 
 export default function storeReducer(store, action = {}) {
-  switch(action.type){
-    case 'set_hello':
-      return {
-        ...store,
-        message: action.payload
-      };
-      
-    case 'add_task':
+  if (action.type === "load_books") {
+    return {
+      ...store,
+      books: action.books,
+    };
+  }
 
-      const { id,  color } = action.payload
+  if (action.type === "edit_book") {
+    const bookIdx = store.books.findIndex((book) => book.id === action.book.id);
+    const newBooks = store.books.toSpliced(bookIdx, 1, action.book);
 
-      return {
-        ...store,
-        todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
-      };
-    default:
-      throw Error('Unknown action.');
-  }    
+    return {
+      ...store,
+      books: newBooks,
+    };
+  }
+
+  if (action.type === "delete_book") {
+    const bookIdx = store.books.findIndex((book) => book.id === action.id);
+    const newBooks = store.books.toSpliced(bookIdx, 1);
+
+    return {
+      ...store,
+      books: newBooks,
+    };
+  }
+
+  return store;
 }
