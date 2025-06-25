@@ -65,8 +65,18 @@ books = [
 ]
 
 
+@api.route("/library", methods=["POST"])
+def create_book():
+    new_book = {
+        **request.json,
+        "id": max([book["id"] for book in books]) + 1,
+    }
+    books.append(new_book)
+    return jsonify(new_book), 200
+
+
 @api.route("/library", methods=["GET"])
-def get_books() -> tuple[str, int]:
+def read_books() -> tuple[str, int]:
     return jsonify(
         books=books, total=len(books),
         offset=0, count=len(books)
@@ -74,7 +84,7 @@ def get_books() -> tuple[str, int]:
 
 
 @api.route("/library/<int:id>", methods=["GET"])
-def get_book(id: int) -> tuple[str, int]:
+def read_book(id: int) -> tuple[str, int]:
     book = next(filter(
         lambda x: id == x["id"],
         books
@@ -84,3 +94,38 @@ def get_book(id: int) -> tuple[str, int]:
         return jsonify(msg=f"Book {id} not found"), 404
 
     return jsonify(book), 200
+
+
+@api.route("/library/<int:id>", methods=["PUT"])
+def update_book(id: int) -> tuple[str, int]:
+    if id not in [book["id"] for book in books]:
+        return jsonify(msg=f"Book {id} not found"), 404
+
+    book_idx = [book["id"] for book in books].index(id)
+
+    updated_book = {
+        **books[book_idx],
+        **request.json,
+    }
+
+    books[book_idx] = updated_book
+
+    return jsonify(updated_book), 200
+
+
+@api.route("/library/<int:id>", methods=["DELETE"])
+def delete_book(id: int) -> tuple[str, int]:
+    if id not in [book["id"] for book in books]:
+        return jsonify(msg=f"Book {id} not found"), 404
+
+    # Another way to remove an item from a list:
+    # new_books = list(filter(
+    #     lambda x: x["id"] != id,
+    #     books
+    # ))
+    # books = new_books
+
+    book_idx = [book["id"] for book in books].index(id)
+    del books[book_idx]
+
+    return "", 204
