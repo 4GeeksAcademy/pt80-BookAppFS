@@ -82,10 +82,13 @@ class Book(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
-    author_id: Mapped[int] = mapped_column(ForeignKey("author.id"))
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.id"),
+        nullable=True,
+    )
     author: Mapped["Author"] = relationship(back_populates="books")
     num_pages: Mapped[int]
-    date_published: Mapped[date]
+    year_published: Mapped[date]
     cover: Mapped[str]
     is_awesome: Mapped[bool]
     genres: Mapped[List["Genre"]] = relationship(
@@ -93,16 +96,23 @@ class Book(Base):
         secondary=book_to_genre,
     )
 
-    def serialize(self) -> dict:
-        return {
+    def serialize(self, include_rel=False) -> dict:
+        book_dict = {
             "id": self.id,
             "title": self.title,
-            # "author": self.author,
             "num_pages": self.num_pages,
-            "date_published": self.date_published,
+            "year_published": self.year_published,
             "cover": self.cover,
             "is_awesome": self.is_awesome,
         }
+
+        if include_rel:
+            return {
+                **book_dict,
+                "author": self.author.serialize() if self.author else None
+            }
+
+        return book_dict
 
     def __repr__(self):
         return f"<Book {self.title}>"
@@ -117,13 +127,21 @@ class Author(Base):
     gender: Mapped[str]
     books: Mapped[List["Book"]] = relationship(back_populates="author")
 
-    def serialize(self) -> dict:
-        return {
+    def serialize(self, include_rel=False) -> dict:
+        author_dict = {
             "id": self.id,
             "name": self.name,
             "dob": self.dob,
             "gender": self.gender,
         }
+
+        if include_rel:
+            return {
+                **author_dict,
+                "books": [book.serialize() if book else None for book in self.books]
+            }
+
+        return author_dict
 
     def __repr__(self):
         return f"<Author {self.name}>"
