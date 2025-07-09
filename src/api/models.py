@@ -9,6 +9,11 @@ from sqlalchemy.orm import (
     DeclarativeBase, Mapped,
     mapped_column, relationship,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash,
+)
 
 
 class Base(DeclarativeBase):
@@ -72,9 +77,23 @@ class User(Base):
         String(256), unique=True, nullable=False,
     )
     email: Mapped[str]
-    password: Mapped[str] = mapped_column(
+    _password: Mapped[str] = mapped_column(
         String(256), nullable=False,
     )
+
+    @hybrid_property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, password):
+        self._password = generate_password_hash(password)
+
+    def check_password_hash(self, other):
+        return check_password_hash(self.password, other)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
 
 
 class Book(Base):

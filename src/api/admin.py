@@ -24,6 +24,12 @@ class GenreView(ModelView):
     ]
 
 
+class UserView(ModelView):
+    column_list = [
+        'id', 'username', 'email', '_password'
+    ]
+
+
 def setup_admin(app):
     app.secret_key = os.environ.get('FLASK_APP_KEY', 'sample key')
     app.config['FLASK_ADMIN_SWATCH'] = 'slate'
