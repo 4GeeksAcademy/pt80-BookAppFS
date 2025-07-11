@@ -6,6 +6,8 @@ import BookCard from "../components/BookCard";
 import { ButtonGroup } from "../components/Button";
 
 import { useBookContext } from "../stores/bookstore";
+import { AorB, AuthedOrNone, LoginForm, SignUpForm } from "../components/Auth";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Home = () => {
   const [title, setTitle] = useState("");
@@ -17,10 +19,28 @@ export const Home = () => {
   };
 
   const [books, bookDispatch] = useBookContext();
+  const { store } = useGlobalReducer();
 
   return (
     <Container>
-      <p>{import.meta.env.VITE_LIBRARYAPI_KEY}</p>
+      <Row>
+        <Col width={{ sm: 6 }} offset={{ sm: 3 }}>
+          {/* <SignUpForm /> */}
+          <LoginForm />
+        </Col>
+      </Row>
+      <Row>
+        <Col width={{ sm: 6 }} offset={{ sm: 3 }}>
+          {/* <AuthedOrNone>
+            <h1>You are logged in!</h1>
+          </AuthedOrNone> */}
+          <h1><AorB
+            authed={`Hello ${store.user?.username}!`}
+            unauthed={"Hello stranger!"}
+          /></h1>
+        </Col>
+      </Row>
+      <div className="mb-3"></div>
       <Row>
         <Col width={{ sm: 8 }} offset={{ sm: 2 }}>
           <ButtonGroup>

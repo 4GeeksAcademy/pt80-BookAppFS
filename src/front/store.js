@@ -1,5 +1,7 @@
 export const initialStore = () => {
   return {
+    token: null,
+    user: null,
     books: [],
   };
 };
@@ -29,6 +31,13 @@ export default function storeReducer(store, action = {}) {
     return {
       ...store,
       books: newBooks,
+    };
+  }
+
+  if (action.type === "login") {
+    return {
+      ...store,
+      ...action.payload,
     };
   }
 

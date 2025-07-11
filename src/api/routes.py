@@ -39,7 +39,10 @@ def login():
     if not user.check_password_hash(request.json["password"]):
         return jsonify(msg="Incorrect credentials."), 401
 
-    return jsonify(token=create_access_token(user))
+    return jsonify(
+        token=create_access_token(user),
+        user=user.serialize(),
+    )
 
 
 @api.route("/secret", methods=["GET"])
@@ -47,7 +50,7 @@ def login():
 def super_secret():
     return jsonify(
         msg="*super obvious whispering.*",
-        user=get_jwt_identity()
+        user=get_current_user().serialize(),
     ), 200
 
 

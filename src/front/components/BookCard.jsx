@@ -2,6 +2,8 @@ import rigoBaby from "../assets/img/rigo-baby.jpg";
 import "./BookCard.css";
 import { DeleteButton } from "./Button";
 
+import { Link } from "react-router-dom";
+
 const BookCard = ({
     book,
     showButtons = false,
@@ -11,6 +13,9 @@ const BookCard = ({
 }) => {
     return (
         <div className="card mx-auto mb-2" style={{}}>
+            <Link to={`/library/${book.id}`}>
+                Visit Book
+            </Link>
             <img
                 src={book?.cover ? book.cover : rigoBaby}
                 className="card-img-top"

@@ -92,6 +92,12 @@ class User(Base):
     def check_password_hash(self, other):
         return check_password_hash(self.password, other)
 
+    def serialize(self):
+        return {
+            "username": self.username,
+            "email": self.email,
+        }
+
     def __repr__(self):
         return f"<User {self.username}>"
 
